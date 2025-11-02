@@ -1,0 +1,65 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+.venv
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Data
+data/raw/*
+data/processed/*
+data/splits/*
+!data/raw/.gitkeep
+!data/processed/.gitkeep
+!data/splits/.gitkeep
+
+# Large CSV files (datasets - too large for GitHub)
+*.csv
+!config/*.yaml
+
+# Models and logs
+models/*
+logs/*
+!models/.gitkeep
+!logs/.gitkeep
+
+# Results
+results/*
+!results/.gitkeep
+
+# Environment
+.env
+.env.local
+
+# Training outputs and logs
+training_output.log
+*.log
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temporary
+*.tmp
+*.bak
+*.log
+
+
+
+
+

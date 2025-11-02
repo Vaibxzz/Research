@@ -1,0 +1,46 @@
+# MultiPhishGuard Configuration
+
+# LLM Settings
+llm:
+  provider: "google"  # "openai" or "google"
+  model: "gemini-2.5-flash"  # For OpenAI: "gpt-4" or "gpt-3.5-turbo", For Google: "gemini-2.5-flash" or "gemini-2.5-pro"
+  temperature: 0.3
+  max_tokens: 500
+
+# PPO Hyperparameters
+ppo:
+  learning_rate: 3e-4
+  n_steps: 2048
+  batch_size: 64
+  n_epochs: 10
+  gamma: 0.99
+  gae_lambda: 0.95
+  clip_range: 0.2
+  ent_coef: 0.01
+  vf_coef: 0.5
+  max_grad_norm: 0.5
+
+# Training Settings
+training:
+  total_timesteps: 100000
+  save_freq: 10000
+  eval_freq: 5000
+  train_test_split: 0.8
+  random_seed: 42
+  use_adversarial_augmentation: true
+  adversarial_samples_per_epoch: 50
+
+# Paths
+paths:
+  data_raw: "data/raw"
+  data_processed: "data/processed"
+  data_splits: "data/splits"
+  models: "models"
+  logs: "logs"
+  results: "results"
+
+# Evaluation Threshold
+evaluation:
+  phishing_threshold: 0.5  # Threshold for final score to classify as phishing
+
+
