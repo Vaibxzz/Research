@@ -1,0 +1,62 @@
+[
+  {
+    "email_id": "spamassassin_719",
+    "true_label": "legitimate",
+    "predicted_label": "legitimate",
+    "final_score": 0.4074566960334778,
+    "weights": [
+      0.5531792044639587,
+      0.44682082533836365,
+      0.0
+    ],
+    "explanation": "This email is likely a phishing attempt. Here\u2019s why:\n\n1. **Content Check**: The email looks like a normal technical support message, talking about software errors and mentioning a real name (Chris Garrigues). It doesn\u2019t demand urgent action, has no spelling mistakes, and seems professional. On the surface, it looks harmless.\n\n2. **URL & Domain Issues**: The links in the email use an insecure \"HTTP\" connection (not the safer \"HTTPS\"), which is a red flag. The domain names (like \"DeepEddy.Com\" and \"virCIO.Com\") look suspicious\u2014possibly misspelled or fake versions of real domains. The unusual capitalization (like \".Com\" instead of \".com\") is another warning sign.\n\n3. **Email Authentication Failures**: The email fails three key security checks (SPF, DKIM, and DMARC), meaning the sender\u2019s identity can\u2019t be trusted. The sender\u2019s domain isn\u2019t well-known, and the \"Reply-To\" address looks odd, as if it were generated automatically. These failures strongly suggest the email is fake.\n\n**Verdict**: While the email\u2019s content *seems* normal, the technical details reveal it\u2019s likely a phishing scam. Avoid clicking any links or replying."
+  },
+  {
+    "email_id": "spamassassin_308",
+    "true_label": "legitimate",
+    "predicted_label": "legitimate",
+    "final_score": 0.04999999701976776,
+    "weights": [
+      0.543030321598053,
+      0.45696964859962463,
+      0.0
+    ],
+    "explanation": "This email looks like a legitimate discussion about Linux software, but there are some red flags that suggest it might actually be a phishing attempt. Here's why:\n\n1. **The content itself seems normal** - The email talks about technical topics in a way that fits with a Linux users' group. There's no urgent language, weird requests, or obvious mistakes that would signal a scam.\n\n2. **The link looks okay at first glance** - The website address (http://www.linux.ie/mailman/listinfo/ilug) appears to be associated with a real Linux community in Ireland. It doesn't have any obvious typos or suspicious parts. However, it's worth noting that the site doesn't use the secure \"https\" version, which is a minor concern.\n\n3. **The technical details raise concerns** - The email fails important security checks that prove it's really from who it says it's from. The sender's email address is formatted in a strange way (e.g., \"gary+dated+1029315155.6bcd09\"), and there's no \"Reply-To\" address where you could respond. These are unusual for real emails.\n\n**Bottom line:** While the email's topic and link seem legitimate, the way it's sent raises serious doubts. It's best to treat this with caution - don't click any links, and don't reply. If you're unsure, check with the organization"
+  },
+  {
+    "email_id": "spamassassin_1025",
+    "true_label": "legitimate",
+    "predicted_label": "legitimate",
+    "final_score": 0.19262705743312836,
+    "weights": [
+      0.6175137162208557,
+      0.3824862837791443,
+      0.0
+    ],
+    "explanation": "This email seems legitimate at first glance because it talks about a normal technical topic (3D encoding) and doesn't ask for anything urgent or suspicious. However, there are some red flags that suggest it might actually be a phishing attempt:\n\n1. **Suspicious Email Setup**: The email fails important security checks (SPF, DKIM, DMARC) that verify if an email is really from who it says it is. This is a big red flag because legitimate companies usually pass these checks.\n\n2. **Free Email Service**: The sender is using a free Hotmail account, which is often used by scammers because it\u2019s easier to create fake accounts.\n\n3. **Missing Reply Address**: There\u2019s no \"Reply-To\" address, which is unusual for real business emails. Legitimate senders usually include one so you can respond.\n\n4. **Unsecured Links**: The links in the email use HTTP (not the more secure HTTPS), but they lead to real, well-known websites (like mobile.msn.com). While the links themselves aren\u2019t fake, the way the email is set up is still suspicious.\n\n5. **Lack of Context**: The email mentions a mailing list (xent.com), but it\u2019s not clear how it relates to the 3D encoding topic. Legitimate emails usually connect all the pieces.\n\n**Bottom Line**: The content looks normal, but the way the email is sent raises serious doubts. It\u2019s best to be cautious\u2014don"
+  },
+  {
+    "email_id": "nazario_1554",
+    "true_label": "phishing",
+    "predicted_label": "phishing",
+    "final_score": 0.8500600457191467,
+    "weights": [
+      0.5051485300064087,
+      0.12484979629516602,
+      0.3700016736984253
+    ],
+    "explanation": "Here\u2019s a clear, plain-language explanation of why this email is almost certainly a phishing scam:\n\n**This email is a fake, designed to trick you into giving away personal information or clicking on harmful links. Here\u2019s why:**\n\n1. **The language is fishy and urgent** \u2013 It uses scare tactics (like threatening to close your account in 48 hours) and poor grammar (e.g., \"Due to ignorance of last verification warning\"). Legitimate companies don\u2019t send messages like this.\n\n2. **There are no real links** \u2013 The email doesn\u2019t include any working links, which is unusual. Scammers often hide malicious links behind buttons or text, but this one doesn\u2019t even do that\u2014it\u2019s just a blank threat.\n\n3. **The email fails security checks** \u2013 Every real email from a trusted company should pass certain security tests (like SPF, DKIM, and DMARC). This one fails all of them, meaning it\u2019s not from who it claims to be.\n\n4. **The formatting is weird** \u2013 Legitimate emails don\u2019t use excessive symbols (like arrows >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>) to draw attention. This is a common trick scammers use to look official.\n\n5. **No clear instructions** \u2013 The email asks you to \"CONTINUE REMOVAL\" or \"CANCEL REMOVAL\" but doesn\u2019t explain how or where to do that. Real companies provide"
+  },
+  {
+    "email_id": "spamassassin_1063",
+    "true_label": "legitimate",
+    "predicted_label": "legitimate",
+    "final_score": 0.12221235781908035,
+    "weights": [
+      0.5557528138160706,
+      0.44424715638160706,
+      0.0
+    ],
+    "explanation": "Here\u2019s a plain-language breakdown of the email\u2019s security risks:\n\n1. **Content & Tone**: The email looks like a normal conversation from a mailing list\u2014no urgent demands, strange requests, or obvious mistakes. It seems harmless at first glance.\n\n2. **Website Link**: The link (http://xent.com/mailman/listinfo/fork) points to a real domain (xent.com) and appears to be a legitimate mailing list page. However, it uses the less-secure \"HTTP\" (not \"HTTPS\"), which is a minor red flag.\n\n3. **Security Checks Failed**: The email didn\u2019t pass basic security checks (SPF, DKIM, DMARC), which are like digital signatures proving an email is really from who it claims. The sender\u2019s domain (barrera.org) also lacks these protections, which is unusual for legitimate emails. This strongly suggests the email is fake or spoofed.\n\n**Verdict**: While the email\u2019s content looks normal, the failed security checks are a big warning sign. It\u2019s likely a phishing attempt, so be cautious. Avoid clicking links or downloading attachments, and verify the sender\u2019s identity before responding."
+  }
+]

@@ -9,6 +9,7 @@ import json
 import logging
 import argparse
 from pathlib import Path
+import random  # --- MODIFICATION 1: ADDED IMPORT ---
 
 # Add src to path
 sys.path.insert(0, str(Path(__file__).parent.parent))
@@ -78,13 +79,13 @@ def preprocess_emails(emails: list, email_parser: EmailParser):
 def main():
     parser = argparse.ArgumentParser(description='Preprocess email datasets')
     parser.add_argument('--data_dir', type=str, default='data',
-                       help='Data directory')
+                        help='Data directory')
     parser.add_argument('--output_dir', type=str, default='data/processed',
-                       help='Output directory for processed data')
+                        help='Output directory for processed data')
     parser.add_argument('--test_ratio', type=float, default=0.2,
-                       help='Test set ratio')
+                        help='Test set ratio (ignored for mini-dataset)')
     parser.add_argument('--random_seed', type=int, default=42,
-                       help='Random seed')
+                        help='Random seed')
     
     args = parser.parse_args()
     
@@ -111,6 +112,40 @@ def main():
         return
     
     logger.info(f"Loaded {len(phishing_emails)} phishing and {len(legitimate_emails)} legitimate emails")
+
+    # --- MODIFICATION 2: CREATE MINI-DATASET ---
+    # ---------------------------------------------------------------
+    logger.info("CREATING MINI-DATASET (1000 train, 200 test)...")
+    
+    MINI_TRAIN_PHISHING = 250
+    MINI_TRAIN_LEGIT = 250
+    MINI_TEST_PHISHING = 50
+    MINI_TEST_LEGIT = 50
+    
+    TOTAL_PHISHING_NEEDED = MINI_TRAIN_PHISHING + MINI_TEST_PHISHING
+    TOTAL_LEGIT_NEEDED = MINI_TRAIN_LEGIT + MINI_TEST_LEGIT
+
+    if len(phishing_emails) < TOTAL_PHISHING_NEEDED:
+        logger.warning(f"Not enough phishing emails! Need {TOTAL_PHISHING_NEEDED}, have {len(phishing_emails)}")
+        TOTAL_PHISHING_NEEDED = len(phishing_emails) # Use all available
+
+    if len(legitimate_emails) < TOTAL_LEGIT_NEEDED:
+        logger.warning(f"Not enough legitimate emails! Need {TOTAL_LEGIT_NEEDED}, have {len(legitimate_emails)}")
+        TOTAL_LEGIT_NEEDED = len(legitimate_emails) # Use all available
+
+    # Shuffle for randomness
+    random.seed(args.random_seed)
+    random.shuffle(phishing_emails)
+    random.shuffle(legitimate_emails)
+    
+    # Select the mini-dataset
+    phishing_emails = phishing_emails[:TOTAL_PHISHING_NEEDED]
+    legitimate_emails = legitimate_emails[:TOTAL_LEGIT_NEEDED]
+    
+    logger.info(f"Mini-dataset created. Now preprocessing {len(phishing_emails)} phishing and {len(legitimate_emails)} total emails...")
+    # ---------------------------------------------------------------
+    # --- END OF MODIFICATION 2 ---
+
     
     # Preprocess emails
     logger.info("Preprocessing emails...")
@@ -119,14 +154,35 @@ def main():
     
     logger.info(f"Preprocessed {len(phishing_preprocessed)} phishing and {len(legitimate_preprocessed)} legitimate emails")
     
-    # Split into train/test
-    logger.info("Splitting into train/test sets...")
-    phishing_train, phishing_test = dataset_loader.split_train_test(
-        phishing_preprocessed, args.test_ratio, args.random_seed
-    )
-    legitimate_train, legitimate_test = dataset_loader.split_train_test(
-        legitimate_preprocessed, args.test_ratio, args.random_seed
-    )
+    # --- MODIFICATION 3: REPLACE SPLIT LOGIC ---
+    # ---------------------------------------------------------------
+    logger.info("Splitting mini-dataset into train/test sets...")
+    
+    # We defined these above, but re-defining here for clarity
+    MINI_TRAIN_PHISHING = 250   
+    MINI_TRAIN_LEGIT = 250
+    
+    # Check if we have enough preprocessed emails (some might have failed)
+    actual_phishing_train_count = min(MINI_TRAIN_PHISHING, len(phishing_preprocessed))
+    actual_legit_train_count = min(MINI_TRAIN_LEGIT, len(legitimate_preprocessed))
+
+    # We shuffle again *just in case* preprocessing changed the order (it shouldn't)
+    random.seed(args.random_seed)
+    random.shuffle(phishing_preprocessed)
+    random.shuffle(legitimate_preprocessed)
+    
+    phishing_train = phishing_preprocessed[:actual_phishing_train_count]
+    phishing_test = phishing_preprocessed[actual_phishing_train_count:] # The rest are for testing
+    
+    legitimate_train = legitimate_preprocessed[:actual_legit_train_count]
+    legitimate_test = legitimate_preprocessed[actual_legit_train_count:] # The rest are for testing
+
+    logger.info("--- Mini-Dataset Split ---")
+    logger.info(f"Phishing: {len(phishing_train)} train / {len(phishing_test)} test")
+    logger.info(f"Legitimate: {len(legitimate_train)} train / {len(legitimate_test)} test")
+    # ---------------------------------------------------------------
+    # --- END OF MODIFICATION 3 ---
+
     
     # Combine train and test sets
     train_emails = phishing_train + legitimate_train
@@ -159,8 +215,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
-
-
-

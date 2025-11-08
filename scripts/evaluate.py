@@ -138,7 +138,9 @@ def evaluate_model(test_emails: list, model_path: str, config: dict,
     for i, features in enumerate(tqdm(features_list, desc="Predicting")):
         # Get weights from PPO
         weights = ppo_module.predict_weights(features)
-        weights_list.append(weights)
+        
+        # --- FIX 1: Convert numpy array to standard list ---
+        weights_list.append(weights.tolist()) 
         
         # Calculate final score
         agent_probs = agent_probs_list[i]
@@ -148,7 +150,8 @@ def evaluate_model(test_emails: list, model_path: str, config: dict,
             weights[2] * agent_probs['meta']
         )
         
-        prediction_probas.append(final_score)
+        # --- FIX 2: Convert numpy.float32 to standard float ---
+        prediction_probas.append(float(final_score))
         
         # Threshold for classification
         threshold = config['evaluation'].get('phishing_threshold', 0.5)
@@ -174,6 +177,7 @@ def evaluate_model(test_emails: list, model_path: str, config: dict,
     
     # Save metrics
     with open(results_dir_path / 'metrics.json', 'w') as f:
+        # Note: metrics dict is already JSON-friendly, but we fixed inputs just in case
         json.dump(metrics, f, indent=2)
     
     # Save predictions
@@ -181,10 +185,11 @@ def evaluate_model(test_emails: list, model_path: str, config: dict,
         'predictions': predictions,
         'prediction_probas': prediction_probas,
         'true_labels': labels_list,
-        'weights': weights_list,
+        'weights': weights_list, # This is now a list of lists, (Fix 1)
         'metrics': metrics
     }
     
+    # This dump will now work
     with open(results_dir_path / 'results.json', 'w') as f:
         json.dump(results_data, f, indent=2)
     
@@ -217,7 +222,7 @@ def evaluate_model(test_emails: list, model_path: str, config: dict,
             'true_label': 'phishing' if true_label == 1 else 'legitimate',
             'predicted_label': 'phishing' if pred == 1 else 'legitimate',
             'final_score': float(prediction_probas[idx]),
-            'weights': weights_list[idx].tolist(),
+            'weights': weights_list[idx], # Already a list, no .tolist() needed
             'explanation': explanation
         })
     
@@ -230,13 +235,13 @@ def evaluate_model(test_emails: list, model_path: str, config: dict,
 def main():
     parser = argparse.ArgumentParser(description='Evaluate MultiPhishGuard model')
     parser.add_argument('--config', type=str, default='config/config.yaml',
-                       help='Path to config file')
+                        help='Path to config file')
     parser.add_argument('--model', type=str, default='models/ppo_model_final.zip',
-                       help='Path to trained model')
+                        help='Path to trained model')
     parser.add_argument('--data_dir', type=str, default='data',
-                       help='Data directory')
+                        help='Data directory')
     parser.add_argument('--results_dir', type=str, default='results',
-                       help='Results directory')
+                        help='Results directory')
     
     args = parser.parse_args()
     
@@ -270,5 +275,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-

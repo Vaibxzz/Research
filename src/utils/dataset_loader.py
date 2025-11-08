@@ -115,8 +115,26 @@ class DatasetLoader:
         try:
             # If directory, load all files
             if os.path.isdir(file_path):
-                files = [f for f in os.listdir(file_path) 
-                        if f.endswith(('.txt', '.eml', '.msg'))]
+
+                # --- MODIFICATION START ---
+                # Original code only checked for .txt, .eml, .msg
+                # We need to also get files with no extension (like SpamAssassin)
+                
+                files = []
+                for f in os.listdir(file_path):
+                    full_path = os.path.join(file_path, f)
+                    
+                    # Make sure it's a file, not a directory (like easy_ham_2)
+                    if os.path.isfile(full_path):
+                        # Keep it if it has a valid extension
+                        if f.endswith(('.txt', '.eml', '.msg')):
+                            files.append(f)
+                        # OR keep it if it starts with a digit (like '00395.1a0d...')
+                        # This avoids files like 'cmds' or '.tar' files
+                        elif f[0].isdigit():
+                            files.append(f)
+                
+                # --- MODIFICATION END ---
                 
                 for i, filename in enumerate(files):
                     file_path_full = os.path.join(file_path, filename)
@@ -242,7 +260,7 @@ class DatasetLoader:
         return phishing_emails, legitimate_emails
     
     def split_train_test(self, emails: List[Dict], test_ratio: float = 0.2, 
-                        random_seed: int = 42) -> Tuple[List[Dict], List[Dict]]:
+                         random_seed: int = 42) -> Tuple[List[Dict], List[Dict]]:
         """
         Split emails into train and test sets
         
@@ -265,4 +283,3 @@ class DatasetLoader:
         test_emails = [emails[i] for i in test_indices]
         
         return train_emails, test_emails
-

@@ -58,7 +58,7 @@ class BaseAgent:
             if not api_key:
                 raise ValueError("OPENAI_API_KEY not found in environment variables")
             
-            self.client = OpenAI(api_key=api_key)
+            self.client = OpenAI(api_key=api_key, base_url="https://openrouter.ai/api/v1")
             self.model = model or "gpt-4"
             
         elif self.provider == "google":
@@ -96,12 +96,23 @@ class BaseAgent:
         Returns:
             Response text
         """
+        
+        # --- MODIFICATION START ---
+        # Add JSON format instruction to the prompt for ALL providers
+        # to prevent verbose responses that break the JSON parser.
+        if response_format:
+            prompt_with_format = prompt + "\n\nIMPORTANT: Respond ONLY with valid JSON in the requested format. Do not include any text outside the JSON."
+        else:
+            prompt_with_format = prompt
+        # --- MODIFICATION END ---
+        
         for attempt in range(self.max_retries):
             try:
                 if self.provider == "openai":
                     kwargs = {
                         "model": self.model,
-                        "messages": [{"role": "user", "content": prompt}],
+                        # Use the modified prompt_with_format
+                        "messages": [{"role": "user", "content": prompt_with_format}],
                         "temperature": self.temperature,
                         "max_tokens": self.max_tokens
                     }
@@ -114,11 +125,7 @@ class BaseAgent:
                     return response.choices[0].message.content
                 
                 elif self.provider == "google":
-                    # For Google Gemini, add JSON format instruction in prompt if needed
-                    if response_format:
-                        prompt_with_format = prompt + "\n\nIMPORTANT: Respond ONLY with valid JSON in the requested format. Do not include any text outside the JSON."
-                    else:
-                        prompt_with_format = prompt
+                    # (Original Google logic is now simpler since prompt_with_format is already set)
                     
                     generation_config = {
                         "temperature": self.temperature,
@@ -136,7 +143,7 @@ class BaseAgent:
                     
                     # Generate content with safety settings
                     response = self.model.generate_content(
-                        prompt_with_format,
+                        prompt_with_format,  # Use the modified prompt
                         generation_config=generation_config,
                         safety_settings=safety_settings
                     )
@@ -175,7 +182,7 @@ class BaseAgent:
                     # If all else fails, return default
                     logger.warning("Could not extract text from response, using default")
                     return '{"verdict": "legitimate", "confidence": 0.5, "rationale": "Could not extract response from model"}'
-                
+            
             except Exception as e:
                 error_str = str(e)
                 # Handle API rate limits - extract retry delay if available
@@ -204,7 +211,6 @@ class BaseAgent:
                 else:
                     logger.error(f"LLM call failed after {self.max_retries} attempts: {e}")
                     raise
-    
     def parse_json_response(self, response: str) -> Dict:
         """
         Parse JSON response from LLM

@@ -1,72 +1,25 @@
-# MultiPhishGuard Testing Guide
+# MultiPhishGuard - PPO vs. XGBoost Comparison Guide
 
-## How to Test the System
+This guide explains how to run the final, comparative analysis of the **PPO Baseline** vs. the **XGBoost Model**. This guide assumes you have already run the 4-hour `scripts/extract_features.py` script at least once.
 
-### Quick Test (Recommended First Step)
+## Prerequisites
 
-Test the system on a small sample of emails:
+This guide requires two key components to be present:
 
-```bash
-python3 scripts/test_system.py --num_samples 10
-```
+1.  **`models/ppo_model_final.zip`**: The PPO model trained on the 500-sample "mini-dataset". This is created by `python src/train.py`.
+2.  **`data/features.json`**: The saved agent features for all 600 samples. This is created by `python scripts/extract_features.py`.
 
-This will:
-- Load 10 emails from your test set (5 phishing, 5 legitimate)
-- Run all 3 agents (Text, URL, Metadata) on each email
-- Show confidence scores and predictions
-- Calculate accuracy, precision, recall, F1
+If you do not have these files, you must run the scripts from the `README.md`'s "Usage" section first.
 
-### Test Single Email
+## How to Run the Final Comparison
 
-Test one specific email:
+### 1. Test the XGBoost Model (10-Second Test)
+
+This is the fastest test. It uses the pre-saved features and requires **no API calls**. It validates our Phase 2 conclusion.
 
 ```bash
-python3 scripts/test_system.py --single_email "Your email text here"
-```
+# Make sure your venv is active
+.\venv\Scripts\activate.ps1
 
-### Full Training Test
-
-Before running full training, you can verify the system works:
-
-1. **Test Preprocessing** (if not done):
-```bash
-python3 scripts/preprocess_data.py
-```
-
-2. **Test with Small Sample**:
-```bash
-python3 scripts/test_system.py --num_samples 5
-```
-
-3. **If tests pass, proceed with training**:
-```bash
-python3 src/train.py --use_adversarial
-```
-
-### Understanding Test Results
-
-- **Verdict**: Agent's decision (phishing/legitimate)
-- **Confidence**: How certain the agent is (0.0-1.0)
-- **Phishing Probability**: Probability that email is phishing
-- **Final Score**: Weighted combination of all agents
-- **Result**: ✓ = Correct, ✗ = Incorrect
-
-### Current Status
-
-⚠️ **Note**: Currently, some API responses may be blocked by Google's safety filters when analyzing actual phishing content. This is expected behavior for security reasons. The system handles this gracefully by:
-- Detecting blocked responses
-- Using default values (0.5 confidence)
-- Continuing processing
-
-For production use, you may need to:
-1. Adjust safety settings in Google Cloud Console
-2. Use a different API key with different restrictions
-3. Pre-process emails to sanitize content
-
-### Troubleshooting
-
-1. **API Key Error**: Ensure `GOOGLE_API_KEY` is set in `.env`
-2. **Module Not Found**: Run `pip3 install -r requirements.txt`
-3. **Safety Filter Blocks**: This is normal - system handles it automatically
-4. **Slow Responses**: API calls take time - be patient during testing
-
+# Run the XGBoost script
+python scripts/train_xgboost.py
